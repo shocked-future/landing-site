@@ -1,0 +1,112 @@
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+}
+
+.header {
+  margin-bottom: 3rem;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 2rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: var(--foreground);
+  opacity: 0.7;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.item {
+  background: var(--background-card);
+  border: 1px solid var(--border-subtle);
+  padding: 1.5rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s;
+  
+  /* Floating effect */
+  box-shadow: var(--shadow-elevation-low);
+}
+
+.item:hover {
+  border-color: var(--accent);
+  transform: translateX(5px);
+  box-shadow: var(--shadow-elevation-medium);
+}
+
+.itemInfo {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.iconPlaceholder {
+  width: 50px;
+  height: 50px;
+  background: rgba(0, 255, 255, 0.1);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  font-size: 1.5rem;
+}
+
+.itemDetails h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin-bottom: 0.25rem;
+}
+
+.meta {
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--foreground);
+  opacity: 0.5;
+}
+
+.downloadBtn {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--foreground);
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.downloadBtn:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--background);
+}
+
+.lockedBtn {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px dashed var(--border-subtle);
+  color: var(--foreground);
+  opacity: 0.5;
+  cursor: not-allowed;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+}
