@@ -85,10 +85,10 @@ export default function SubscribePage() {
                     <h2 className={styles.planName}>Operative</h2>
                     <div className={styles.price}>$5<span>/mo</span></div>
                     <ul className={styles.features}>
-                        <li className={styles.feature}><span className={styles.check}>✓</span> <strong>Early Access</strong> to builds</li>
-                        <li className={styles.feature}><span className={styles.check}>✓</span> 4K Wallpaper Vault</li>
-                        <li className={styles.feature}><span className={styles.check}>✓</span> "Operative" Discord Role</li>
-                        <li className={styles.feature}><span className={styles.check}>✓</span> Voting rights on features</li>
+                        <li className={styles.feature}><span className={styles.check}>✓</span>Access to Dev Logs - Stay informed with insider development updates.</li>
+                        <li className={styles.feature}><span className={styles.check}>✓</span>Community Recognition - Special “Operative” role in Discord.</li>
+                        <li className={styles.feature}><span className={styles.check}>✓</span>Feature Influence - Participate in polls and help shape priorities.</li>
+                        <li className={styles.feature}><span className={styles.check}>✓</span>Support the Mission - Your contribution fuels Shocked Future's growth.</li>
                     </ul>
                     <button
                         className={`${styles.button} ${styles.buttonPrimary}`}
@@ -98,15 +98,16 @@ export default function SubscribePage() {
                     </button>
                 </div>
 
-                {/* Tier 3: Enterprise */}
+                {/* Tier 2: Insider Vanguard */}
                 <div className={styles.card}>
                     <h2 className={styles.planName}>Vanguard</h2>
-                    <div className={styles.price}>$50<span>/yr</span></div>
+                    <div className={styles.price}>$10<span>/mo</span></div>
                     <ul className={styles.features}>
-                        <li className={styles.feature}><span className={styles.check}>✓</span> All Operative benefits</li>
-                        <li className={styles.feature}><span className={styles.check}>✓</span> 2 Months Free</li>
-                        <li className={styles.feature}><span className={styles.check}>✓</span> Name in Game Credits</li>
-                        <li className={styles.feature}><span className={styles.check}>✓</span> Physical Sticker Pack (Soon)</li>
+                        <li className={styles.feature}><span className={styles.check}>✓</span>All Operative Benefits - Everything from the previous tier.</li>
+                        <li className={styles.feature}><span className={styles.check}>✓</span>Beta Build Access - Play one week after our specters.</li>
+                        <li className={styles.feature}><span className={styles.check}>✓</span>Priority Feedback Loop - Your input gets top consideration.</li>
+                        <li className={styles.feature}><span className={styles.check}>✓</span>Priority Feedback Loop - Your input gets top consideration.</li>
+                        <li className={styles.feature}><span className={styles.check}>✓</span>Deeper Dev Insights - Behind-the-scenes commentary and previews.</li>
                     </ul>
                     <button
                         className={styles.button}

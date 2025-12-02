@@ -4,7 +4,7 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Analytics } from "@vercel/analytics/next";
+import { GoogleAnalytics } from '@next/third-parties/google'
 import { AuthProvider } from '@/context/AuthContext';
 
 
@@ -29,7 +29,7 @@ export default function RootLayout({
             <main style={{ flex: 1 }}>{children}</main>
             <Footer />
             <SpeedInsights />
-            <Analytics />
+            <GoogleAnalytics gaId="G-WWJDEHC05F" />
           </div>
         </AuthProvider>
       </body>
