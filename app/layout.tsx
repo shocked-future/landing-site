@@ -4,7 +4,7 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { GoogleTagManager } from '@next/third-parties/google'
+import { GoogleAnalytics } from '@next/third-parties/google'
 import { AuthProvider } from '@/context/AuthContext';
 import { GoogleAdSense } from '@/components/GoogleAdsense';
 
@@ -39,7 +39,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <GoogleTagManager gtmId="G-WWJDEHC05F" />
       <head>
         <GoogleAdSense />
       </head>
@@ -54,6 +53,8 @@ export default function RootLayout({
           </div>
         </AuthProvider>
       </body>
+      <GoogleAnalytics gaId="G-WWJDEHC05F" />
+
     </html>
   );
 }
