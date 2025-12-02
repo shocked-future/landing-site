@@ -9,3 +9,4 @@ if (!enigmaUrl || !enigmaKey) {
 
 // This client is strictly for Authentication
 export const enigmaAuth = createClient(enigmaUrl, enigmaKey);
+export const enigmaDB = createClient(enigmaUrl, enigmaKey);
