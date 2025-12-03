@@ -5,6 +5,7 @@ Disallow: /forgot-password
 Disallow: /update-password
 Disallow: /api/
 Disallow: /auth/
+Disallow: /studio
 User-agent: Claude-Web
 Disallow: /
 User-agent: anthropic-ai
