@@ -10,13 +10,18 @@
   },
   "dependencies": {
     "@next/third-parties": "^16.0.6",
+    "@portabletext/react": "^5.0.0",
+    "@sanity/cli": "^4.20.0",
+    "@sanity/client": "^7.13.1",
+    "@sanity/image-url": "^2.0.1",
+    "@sanity/vision": "^4.20.0",
     "@stripe/stripe-js": "^8.5.3",
     "@supabase/supabase-js": "^2.81.1",
-    "@vercel/analytics": "^1.5.0",
-    "@vercel/speed-insights": "^1.2.0",
     "next": "16.0.3",
+    "next-sanity": "^11.6.10",
     "react": "19.2.0",
     "react-dom": "19.2.0",
+    "sanity": "^4.20.0",
     "stripe": "^20.0.0"
   },
   "devDependencies": {

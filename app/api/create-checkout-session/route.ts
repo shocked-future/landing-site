@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
-import { stripe } from '@/lib/stripe';
+import { stripe } from '@/lib/stripeAdmin';
 
 export async function POST(request: Request) {
   try {
@@ -25,9 +25,8 @@ export async function POST(request: Request) {
 
     // --- SECURITY UPDATE: Allowed Price IDs ---
     const allowedPrices = [
-      process.env.NEXT_PUBLIC_PRICE_ID_OPERATIVE_MONTHLY,
-      process.env.NEXT_PUBLIC_PRICE_ID_VANGUARD_MONTHLY, // Updated from yearly
-      process.env.NEXT_PUBLIC_PRICE_ID_SPECTER           // New Tier
+      process.env.NEXT_PUBLIC_PRICE_ID_OPERATIVE,
+      process.env.NEXT_PUBLIC_PRICE_ID_VANGUARD // Updated from yearly
     ];
 
     if (!allowedPrices.includes(priceId)) {

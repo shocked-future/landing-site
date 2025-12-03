@@ -20,6 +20,9 @@ export default function Navbar() {
                 <Link href="/games" className={styles.navLink}>
                     Our Games
                 </Link>
+                <Link href="/blog" className={styles.navLink}>
+                    Blog
+                </Link>
                 <Link href="/subscribe" className={styles.navLink} style={{ color: 'var(--accent)' }}>Pricing</Link> {/* Highlighted */}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginLeft: 'auto' }}>
