@@ -8,10 +8,20 @@ import { PortableText } from '@portabletext/react';
 import { sanityClient, urlFor } from '@/lib/sanityClient';
 import { useAuth } from '@/context/AuthContext';
 import { enigmaDB } from '@/lib/enigmaClient';
-import styles from './blog.module.css';
+import styles from '../blog/blog.module.css';
+
+// --- Types for Reusable Post Summary ---
+interface PostSummary {
+    _id: string;
+    title: string;
+    slug: { current: string };
+    mainImage: any;
+    publishedAt: string;
+    isDevLog: boolean;
+    isPinned?: boolean; // Ensure this is available if needed
+}
 
 // --- Components for Portable Text Rendering ---
-// This ensures Sanity's rich text content looks good with our CSS
 const components = {
     block: {
         h2: ({ children }: any) => <h2 className={styles.postBody}>{children}</h2>,
@@ -50,6 +60,81 @@ const PaywallBlocker = () => (
         </Link>
     </div>
 );
+
+// --- New: Related Posts Grid Component ---
+const RelatedPostsGrid = ({ currentPostId }: { currentPostId: string }) => {
+    const [relatedPosts, setRelatedPosts] = useState<PostSummary[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    const fetchRelatedPosts = useCallback(async () => {
+        setLoading(true);
+        try {
+            // Query for the latest 3 posts, excluding the current one
+            const query = `*[_type == "post" && _id != $currentPostId] | order(publishedAt desc)[0...3] {
+        _id,
+        title,
+        slug,
+        mainImage,
+        publishedAt,
+        isDevLog
+      }`;
+            // Use revalidate: 60 to prevent excessive re-fetches
+            const posts = await sanityClient.fetch(query, { currentPostId }, { next: { revalidate: 60 } });
+            setRelatedPosts(posts);
+        } catch (error) {
+            console.error("Failed to fetch related posts:", error);
+        } finally {
+            setLoading(false);
+        }
+    }, [currentPostId]);
+
+    useEffect(() => {
+        if (currentPostId) {
+            fetchRelatedPosts();
+        }
+    }, [currentPostId, fetchRelatedPosts]);
+
+    if (loading || relatedPosts.length === 0) {
+        return null; // Don't show the section if loading or empty
+    }
+
+    return (
+        <section className={styles.relatedPostsSection}>
+            <h2 className={styles.relatedPostsTitle}>More from the Shocked Future</h2>
+            <div className={styles.relatedPostsGrid}>
+                {relatedPosts.map((post) => (
+                    <Link href={`/blog/${post.slug.current}`} key={post._id} className={styles.postCard}>
+                        <div className={styles.postImageWrapper}>
+                            {post.mainImage && (
+                                <Image
+                                    src={urlFor(post.mainImage).width(500).height(280).url()}
+                                    alt={post.title}
+                                    fill
+                                    style={{ objectFit: 'cover' }}
+                                    sizes="(max-width: 768px) 100vw, 300px"
+                                />
+                            )}
+                        </div>
+                        <div className={styles.postContent}>
+                            <h3 className={styles.postTitle}>
+                                {post.title}
+                                {post.isDevLog && (
+                                    <span className={styles.badge}>🔒 DEV LOG</span>
+                                )}
+                            </h3>
+                            <p className={styles.postMeta}>
+                                {new Date(post.publishedAt).toLocaleDateString('en-US', {
+                                    year: 'numeric', month: 'long', day: 'numeric',
+                                })}
+                            </p>
+                        </div>
+                    </Link>
+                ))}
+            </div>
+        </section>
+    );
+};
+// --- End: Related Posts Grid Component ---
 
 export default function PostPage() {
     const pathname = usePathname();
@@ -107,7 +192,8 @@ export default function PostPage() {
             const query = `*[_type == "post" && slug.current == $slug][0] {
         _id, title, slug, mainImage, publishedAt, body, isDevLog
       }`;
-            const postData = await sanityClient.fetch(query, { slug });
+            // Use no-cache for the main post content as it's viewed on demand
+            const postData = await sanityClient.fetch(query, { slug }, { cache: 'no-store' });
 
             if (!postData) {
                 setLoading(false);
@@ -178,15 +264,20 @@ export default function PostPage() {
                 </div>
             )}
 
-            {/* --- THE PAYWALL IMPLEMENTATION --- */}
-            {/* If it's a dev log AND the user doesn't have access, show the blocker */}
-            {(post.isDevLog && !hasAccess) ? (
-                <PaywallBlocker />
-            ) : (
-                <div className={styles.postBody}>
-                    <PortableText value={post.body} components={components} />
-                </div>
-            )}
+            {/* Article Content - Restricted or Full */}
+            <div className={styles.articleContent}>
+                {(post.isDevLog && !hasAccess) ? (
+                    <PaywallBlocker />
+                ) : (
+                    <div className={styles.postBody}>
+                        <PortableText value={post.body} components={components} />
+                    </div>
+                )}
+            </div>
+
+            {/* New Section: Related Posts Grid */}
+            <RelatedPostsGrid currentPostId={post._id} />
+
         </article>
     );
 }
