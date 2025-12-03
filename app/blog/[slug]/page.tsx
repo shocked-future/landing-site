@@ -8,7 +8,7 @@ import { PortableText } from '@portabletext/react';
 import { sanityClient, urlFor } from '@/lib/sanityClient';
 import { useAuth } from '@/context/AuthContext';
 import { enigmaDB } from '@/lib/enigmaClient';
-import styles from '../blog/blog.module.css';
+import styles from './blog.module.css';
 
 // --- Types for Reusable Post Summary ---
 interface PostSummary {
