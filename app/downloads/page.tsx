@@ -1,14 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { enigmaAuth, enigmaDB } from '@/lib/enigmaClient'; // Added enigmaDB import
+import { enigmaDB } from '@/lib/enigmaClient';
 import styles from './downloads.module.css';
 
-// Define the interface for the database structure
 interface Asset {
-    id: string; // Assumed UUID from your description
+    id: string;
     name: string;
     version: string;
     size: string;
@@ -18,153 +17,127 @@ interface Asset {
 }
 
 export default function DownloadsPage() {
-    const { user, loading } = useAuth();
+    const { user, loading: authLoading } = useAuth();
     const router = useRouter();
 
-    // New states for fetching assets
     const [assets, setAssets] = useState<Asset[]>([]);
-    const [loadingAssets, setLoadingAssets] = useState(true);
+    const [profile, setProfile] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
     const [fetchError, setFetchError] = useState<string | null>(null);
 
-    // Existing states for subscription check
-    const [hasSubscription, setHasSubscription] = useState(false);
-    const [checkingSub, setCheckingSub] = useState(true);
+    // --- Parallel Data Fetching ---
+    const fetchData = useCallback(async () => {
+        if (!user) return;
 
+        try {
+            // We use Promise.all to fetch assets and profile simultaneously
+            const [assetsResult, profileResult] = await Promise.all([
+                // Fetch 1: Get all assets from the vault
+                enigmaDB.from('vault_assets').select('*').order('name', { ascending: true }),
+
+                // Fetch 2: Get the user's subscription profile
+                enigmaDB.from('profiles').select('subscription_tier, subscription_status').eq('id', user.id).single()
+            ]);
+
+            if (assetsResult.error) throw new Error(`Asset Error: ${assetsResult.error.message}`);
+            if (profileResult.error) throw new Error(`Profile Error: ${profileResult.error.message}`);
+
+            setAssets(assetsResult.data as Asset[]);
+            setProfile(profileResult.data);
+
+        } catch (e: any) {
+            console.error("Error fetching vault data:", e);
+            setFetchError(e.message);
+        } finally {
+            setLoading(false);
+        }
+    }, [user]);
 
     useEffect(() => {
-        // Function to check subscription status from user metadata
-        const checkSubscription = async () => {
-            if (!user) return;
-
-            try {
-                // Fetch the latest user metadata (where subscription_tier is stored)
-                const { data: { user: updatedUser } } = await enigmaAuth.auth.getUser();
-
-                // This tier field should be updated by your Stripe Webhooks
-                const tier = updatedUser?.user_metadata?.subscription_tier;
-
-                // If the user has any paid tier, they have access to locked assets
-                if (tier === 'operative' || tier === 'vanguard' || tier === 'specter') {
-                    setHasSubscription(true);
-                } else {
-                    setHasSubscription(false);
-                }
-            } catch (e) {
-                console.error("Error checking subscription status:", e);
-                setHasSubscription(false);
-            } finally {
-                setCheckingSub(false);
-            }
-        };
-
-        // Function to fetch assets from Supabase
-        const fetchAssets = async () => {
-            setLoadingAssets(true);
-            setFetchError(null);
-            try {
-                // Query the 'vault_assets' table in the public schema
-                const { data, error } = await enigmaDB
-                    .from('vault_assets')
-                    .select('*')
-                    .order('id', { ascending: true }); // Order by name for consistency
-
-                if (error) {
-                    throw new Error(error.message);
-                }
-
-                if (data) {
-                    setAssets(data as Asset[]);
-                }
-            } catch (e: any) {
-                console.error("Error fetching vault assets:", e);
-                setFetchError(`Failed to load assets: ${e.message}`);
-            } finally {
-                setLoadingAssets(false);
-            }
-        };
-
-
-        if (!loading && !user) {
-            // Not logged in, redirect
+        if (!authLoading && !user) {
             router.push('/login');
         } else if (user) {
-            // Logged in, check subscription and fetch assets simultaneously
-            checkSubscription();
-            fetchAssets();
+            fetchData();
         }
-    }, [user, loading, router]); // Dependency array ensures effects run on auth change
+    }, [user, authLoading, router, fetchData]);
 
-    if (loading || checkingSub || loadingAssets) {
-        return (
-            <div style={{ textAlign: 'center', marginTop: '4rem' }}>
-                Verifying Clearance Level and Loading Vault Assets...
-            </div>
-        );
-    }
+    // --- Access Logic ---
+    const hasSubscriptionAccess = () => {
+        if (!profile) return false;
+        const tier = profile.subscription_tier;
+        const status = profile.subscription_status;
 
-    if (fetchError) {
-        return (
-            <div style={{ textAlign: 'center', marginTop: '4rem', color: '#ff4d4d' }}>
-                Error retrieving vault data: {fetchError}
-                <p style={{ fontSize: '0.9rem', opacity: 0.7, marginTop: '1rem' }}>
-                    Please ensure the 'vault_assets' table exists in the public schema and RLS policies allow reading.
-                </p>
-            </div>
-        );
-    }
+        // Check if they have an active subscription to *any* paid tier
+        return status === 'active' && (tier === 'operative' || tier === 'vanguard' || tier === 'specter');
+    };
 
     const handleDownload = (asset: Asset) => {
-        if (asset.requiresSub && !hasSubscription) {
-            alert("Access Denied: Operative Clearance (Subscription) required.");
+        if (asset.requiresSub && !hasSubscriptionAccess()) {
+            // This shouldn't be possible if button is locked, but good to check
             router.push('/subscribe');
             return;
         }
-        // In a real scenario, this is where you'd fetch a secure, time-limited download URL
+        // TODO: Replace with a call to a secure download API
         alert(`Initiating secure download: ${asset.name}`);
+        // In production, you'd call an API that generates a pre-signed S3/Supabase URL
+        // e.g., fetch(`/api/get-download-url?file=${asset.url}`).then(...)
     };
+
+    if (authLoading || loading) {
+        return <div style={{ textAlign: 'center', marginTop: '4rem' }}>Accessing Vault... Verifying Clearance...</div>;
+    }
+
+    if (fetchError) {
+        return <div style={{ textAlign: 'center', marginTop: '4rem', color: '#ff4d4d' }}>Error: {fetchError}</div>;
+    }
 
     return (
         <div className={styles.container}>
             <div className={styles.header}>
                 <h1 className={styles.title}>Digital Asset Vault</h1>
-                <p className={styles.subtitle}>Secure storage for game builds, media, and development assets, dynamically loaded from Supabase.</p>
+                <p className={styles.subtitle}>Secure storage for game builds, media, and development assets.</p>
             </div>
 
             <div className={styles.list}>
                 {assets.length === 0 ? (
                     <p style={{ textAlign: 'center', opacity: 0.7, padding: '2rem' }}>No assets are currently available in the vault.</p>
                 ) : (
-                    assets.map((asset) => (
-                        <div key={asset.id} className={styles.item}>
-                            <div className={styles.itemInfo}>
-                                <div className={styles.iconPlaceholder}>
-                                    {asset.type === 'Game Build' ? '🎮' : asset.type === 'Media' ? '🖼️' : '📦'}
-                                </div>
-                                <div className={styles.itemDetails}>
-                                    <h3>{asset.name}</h3>
-                                    <div className={styles.meta}>
-                                        {asset.type} • {asset.version} • {asset.size}
+                    assets.map((asset) => {
+                        // Determine if the asset should be locked
+                        const isLocked = asset.requiresSub && !hasSubscriptionAccess();
+
+                        return (
+                            <div key={asset.id} className={styles.item} style={{ opacity: isLocked ? 0.6 : 1 }}>
+                                <div className={styles.itemInfo}>
+                                    <div className={styles.iconPlaceholder}>
+                                        {asset.type === 'Game Build' ? '🎮' : asset.type === 'Media' ? '🖼️' : '📦'}
+                                    </div>
+                                    <div className={styles.itemDetails}>
+                                        <h3>{asset.name}</h3>
+                                        <div className={styles.meta}>
+                                            {asset.type} • {asset.version} • {asset.size}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            {asset.requiresSub && !hasSubscription ? (
-                                <button
-                                    className={styles.lockedBtn}
-                                    onClick={() => router.push('/subscribe')}
-                                >
-                                    🔒 Locked (Upgrade)
-                                </button>
-                            ) : (
-                                <button
-                                    className={styles.downloadBtn}
-                                    onClick={() => handleDownload(asset)}
-                                >
-                                    ⬇ Download
-                                </button>
-                            )}
-                        </div>
-                    ))
+                                {isLocked ? (
+                                    <button
+                                        className={styles.lockedBtn}
+                                        onClick={() => router.push('/subscribe')}
+                                    >
+                                        🔒 Locked (Upgrade)
+                                    </button>
+                                ) : (
+                                    <button
+                                        className={styles.downloadBtn}
+                                        onClick={() => handleDownload(asset)}
+                                    >
+                                        ⬇ Download
+                                    </button>
+                                )}
+                            </div>
+                        );
+                    })
                 )}
             </div>
         </div>
