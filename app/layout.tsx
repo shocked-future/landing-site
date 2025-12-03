@@ -3,7 +3,6 @@ import { Host_Grotesk } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { GoogleAnalytics } from '@next/third-parties/google'
 import { AuthProvider } from '@/context/AuthContext';
 import { GoogleAdSense } from '@/components/GoogleAdsense';
@@ -49,7 +48,6 @@ export default function RootLayout({
             <Navbar />
             <main style={{ flex: 1 }}>{children}</main>
             <Footer />
-            <SpeedInsights />
           </div>
         </AuthProvider>
       </body>
