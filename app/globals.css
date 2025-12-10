@@ -1,0 +1,24 @@
+@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #050505; /* Void Black */
+  --foreground: #e5e5e5; /* Concrete White */
+  --accent: #3b82f6;     /* Subtle Tech Blue (optional) */
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif; /* Replace with Inter or Geist if available */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Minimalist Utilities */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
