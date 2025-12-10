@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import Image from 'next/image';
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseUrl = "https://iktupvqdixstntwippyx.supabase.co";
+const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrdHVwdnFkaXhzdG50d2lwcHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUyOTM2MDUsImV4cCI6MjA4MDg2OTYwNX0.0kuKULP_0quY2TIufPzQQ_MS9hNXFRLsXJq4XbMEwwo";
 // Your exact interface
 type Game = {
     id: number;
@@ -36,14 +36,14 @@ export default async function CatalogPage() {
             <header className="mb-16 border-b border-white/10 pb-8 flex justify-between items-end">
                 <div>
 
-                             <Image
-                                src="/logo.svg"
-                                alt="Shocked Future"
-                                width={240}
-                                height={60}
-                                className="object-contain drop-shadow-2xl mb-2"
-                                priority
-                              />
+                    <Image
+                        src="/logo.svg"
+                        alt="Shocked Future"
+                        width={240}
+                        height={60}
+                        className="object-contain drop-shadow-2xl mb-2"
+                        priority
+                    />
                     <h1 className="text-4xl font-bold text-white tracking-tight mb-2">Our Games.</h1>
                 </div>
                 {/* Optional total count */}
@@ -132,7 +132,7 @@ export default async function CatalogPage() {
                                                 Access Game
                                             </a>
                                         ) : (
-                                                    <button disabled className="inline-flex items-center px-6 py-2 bg-zinc-900  font-mono uppercase text-sm tracking-widest hover:bg-blue-400 transition-colors">
+                                            <button disabled className="inline-flex items-center px-6 py-2 bg-zinc-900  font-mono uppercase text-sm tracking-widest hover:bg-blue-400 transition-colors">
                                                 PENDING LINK
                                             </button>
                                         )
