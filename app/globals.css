@@ -4,7 +4,7 @@
 @tailwind utilities;
 
 :root {
-  --background: #050505; /* Void Black */
+  --background: #FFFFFF; /* Void Black */
   --foreground: #e5e5e5; /* Concrete White */
   --accent: #3b82f6;     /* Subtle Tech Blue (optional) */
 }
