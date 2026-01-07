@@ -35,7 +35,6 @@ export default function Home() {
         <Link
           href="/catalog"
           className="group relative px-8 py-3 bg-zinc-100 text-black font-bold uppercase tracking-widest hover:bg-white transition-all"
-          disabled
         >
           Enter Catalog
           <span className="absolute inset-0 border border-white opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300"></span>
