@@ -7,7 +7,7 @@ export default function Footer() {
 
                 {/* Brand & Copyright */}
                 <div className="space-y-2">
-                    <h3 className="text-white font-bold tracking-widest uppercase">Shocked Future</h3>
+                    <h3 className="text-white font-bold tracking-widest uppercase">Shocked Future Studios</h3>
                     <p className="text-zinc-600 text-xs">
                         © {new Date().getFullYear()} Shocked Future Studios. <br />
                         All Rights Reserved.
