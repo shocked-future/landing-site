@@ -14,7 +14,7 @@ export default function Home() {
         <div className="relative w-full max-w-[527px] aspect-[527/93]">
           <Image
             src="/logo.svg"
-            alt="Shocked Future"
+            alt="Shocked Future Studios Logo"
             fill
             className="object-contain drop-shadow-2xl"
             priority
@@ -39,17 +39,6 @@ export default function Home() {
           Enter Catalog
           <span className="absolute inset-0 border border-white opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300"></span>
         </Link>
-        <div className="mt-32 mb-16 w-full max-w-2xl border-t border-dashed border-zinc-800 pt-8 text-center">
-          <p className="text-zinc-600 text-md mb-4 font-bold">
-            RESTORATION REQUIRES RESOURCES
-          </p>
-          <a
-            href="https://www.patreon.com/ShockedFuture"
-            className="text-white border-b border-transparent hover:border-[#FF424D] hover:text-[#FF424D] transition-all pb-1 font-bold tracking-wide text-lg"
-          >
-            Join the Shocked Future Patreon &rarr;
-          </a>
-        </div>
 
       </div>
     </main>

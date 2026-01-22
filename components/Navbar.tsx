@@ -15,7 +15,7 @@ export default function Navbar() {
                 <Link href="/" className="opacity-90 hover:opacity-100 transition-opacity">
                     <Image
                         src="/logo.svg"
-                        alt="Shocked Future"
+                        alt="Shocked Future Studios Logo"
                         width={180} // Scaled down from 527
                         height={32} // Scaled down from 93
                         className="object-contain"
